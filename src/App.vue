@@ -2,20 +2,20 @@
   <div class="users"></div>
   <div class="container"></div>
   <section>
-    <h5 class="title">Novo usuário</h5>
+    <h5 class="title">Novo Item</h5>
     <form @submit.prevent="createUser">
-      <input type="text" placeholder="Nome" v-model="form.name" />
-      <input type="text" placeholder="E-mail" v-model="form.email" />
+      <input type="text" placeholder="Item" v-model="form.name" />
+      <input type="number" placeholder="Quantidade" v-model="form.quantity" />
       <button type="submit">Adicionar</button>
     </form>
   </section>
   <section>
-    <h5 class="title">Lista de usuários</h5>
+    <h5 class="title">Lista de Items</h5>
     <ul>
-      <li v-for="user in users" :key="user.id">
-        <p>{{ user.name }}</p>
-        <small>{{ user.email }}</small>
-        <a class="destroy" @click="destroyUser(user.id)"></a>
+      <li v-for="item in items" :key="item.id">
+        <p>{{ item.name }}</p>
+        <small>{{ item.quantity }}</small>
+        <a class="destroy" @click="destroyUser(item.id)"></a>
       </li>
     </ul>
   </section>
@@ -25,19 +25,19 @@
 import { defineComponent } from "vue";
 import axios from "@/utils/axios";
 
-interface User {
+interface Items {
   id: string;
-  email: string;
   name: string;
+  quantity: number;
 }
 
 export default defineComponent({
   data() {
     return {
-      users: [] as User[],
+      items: [] as Items[],
       form: {
         name: "",
-        email: "",
+        quantity: "",
       },
     };
   },
@@ -47,27 +47,27 @@ export default defineComponent({
   methods: {
     async fetchUsers() {
       try {
-        const { data } = await axios.get("/users");
-        this.users = data;
+        const { data } = await axios.get("/items");
+        this.items = data;
       } catch (error) {
         console.warn(error);
       }
     },
     async createUser() {
       try {
-        const { data } = await axios.post("/users", this.form);
-        this.users.push(data);
+        const { data } = await axios.post("/items", this.form);
+        this.items.push(data);
         this.form.name = "";
-        this.form.email = "";
+        this.form.quantity = "";
       } catch (error) {
         console.warn(error);
       }
     },
-    async destroyUser(id: User["id"]) {
+    async destroyUser(id: Items["id"]) {
       try {
-        await axios.delete(`/users/${id}`);
-        const userIndex = this.users.findIndex((user) => user.id == id);
-        this.users.splice(userIndex, 1);
+        await axios.delete(`/items/${id}`);
+        const itemIndex = this.items.findIndex((items) => items.id == id);
+        this.items.splice(itemIndex, 1);
       } catch (error) {
         console.warn(error);
       }
